@@ -1,0 +1,13 @@
+query LiveChallenge($id: String!) {
+    liveChallenge(id: $id) {
+        id
+        isLive
+        liveItemState
+        itemRevision {
+            id
+            itemDoc
+            explanationDoc
+            apiVersion
+        }
+    }
+}

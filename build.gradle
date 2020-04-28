@@ -1,5 +1,6 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+    id 'com.apollographql.apollo' version '2.0.0'
 }
 
 group 'org.example'
@@ -7,10 +8,16 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "com.apollographql.apollo:apollo-runtime"
+}
+
+apollo {
+    generateKotlinModels = true
 }
 
 compileKotlin {

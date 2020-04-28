@@ -1,0 +1,12 @@
+{
+    "name": "Itempool API (4/17/20)",
+    "schemaPath": "graphql/dev/anli/entityocean/schema.json",
+    "extensions": {
+        "endpoints": {
+            "Itempool API": {
+                "url": "https://api.itempool.com/graphql",
+                "introspect": false
+            }
+        }
+    }
+}
