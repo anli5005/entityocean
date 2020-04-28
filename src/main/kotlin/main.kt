@@ -5,9 +5,12 @@ import kotlinx.coroutines.runBlocking
 import kotlin.system.exitProcess
 
 internal fun main() {
-    val client = ItempoolClient("https://api.itempool.com/graphql")
+    val client = ItempoolClient("api.itempool.com")
 
     runBlocking<Nothing> {
+        client.obtainTokens()
+        println("Obtained tokens")
+
         val challenge: LiveChallenge?
         try {
             challenge = client.liveChallenge("777f4119-ba9d-4ab8-a2c4-f233304c231d")
@@ -31,7 +34,7 @@ internal fun main() {
                         is Math -> "$${it.attrs.latex}$"
                         else -> "<${it.type}>"
                     }
-                } ?: listOf() else listOf()
+                } else listOf()
             }.joinToString("")
             println("Text: $text")
 
