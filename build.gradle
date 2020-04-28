@@ -3,7 +3,7 @@ plugins {
     id 'com.apollographql.apollo' version '2.0.0'
 }
 
-group 'org.example'
+group 'dev.anli'
 version '1.0-SNAPSHOT'
 
 repositories {
