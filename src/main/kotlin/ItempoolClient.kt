@@ -7,7 +7,7 @@ import dev.anli.entityocean.type.Doc
 import dev.anli.entityocean.type.Item
 import dev.anli.entityocean.type.LiveChallenge
 
-class ItempoolClient(val url: String) {
+class ItempoolClient(url: String) {
     val client: ApolloClient = ApolloClient.builder()
         .useHttpGetMethodForQueries(false)
         .serverUrl(url)
