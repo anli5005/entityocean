@@ -1,0 +1,5 @@
+mutation Answer($data: ItemAttemptInput!) {
+    updateItemAttempt(data: $data) {
+        id
+    }
+}

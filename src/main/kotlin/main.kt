@@ -42,7 +42,7 @@ internal fun main() {
                 when (field) {
                     is MultipleChoice -> {
                         println("Type: Multiple Choice")
-                        println("Options: ${field.options.joinToString(", ") { it.second ?: "<malformed option>" }}")
+                        println("Options: ${field.options.joinToString(", ") { it.second ?: "<${it.first}>" }}")
                     }
                     is ExpressionResponse -> {
                         println("Type: Expression Response")

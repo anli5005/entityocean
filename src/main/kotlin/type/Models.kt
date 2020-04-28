@@ -1,7 +1,9 @@
 package dev.anli.entityocean.type
 
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.TypeFor
 import dev.anli.entityocean.util.ContentTypeAdapter
+import kotlin.reflect.KClass
 
 data class Item(
     val id: String,
@@ -23,6 +25,7 @@ data class Math(val attrs: Attrs): Content("math") {
 
 interface AnswerField {
     val id: String
+    val answerType: KClass<out Answer>
 }
 
 data class MultipleChoice(val attrs: Attrs): Content("multiple-choice"),
@@ -41,6 +44,7 @@ data class MultipleChoice(val attrs: Attrs): Content("multiple-choice"),
     )
 
     override val id get() = attrs.id
+    override val answerType get() = MultipleChoiceAnswer::class
 }
 
 data class ExpressionResponse(val attrs: Attrs): Content("expression"),
@@ -65,9 +69,29 @@ data class ExpressionResponse(val attrs: Attrs): Content("expression"),
     )
 
     override val id get() = attrs.id
+    override val answerType = MultipleChoiceAnswer::class
 }
 
 data class LiveChallenge(
     val state: LiveItemState,
     val itemRevision: Item
 )
+
+interface Answer {
+    val scorableState: JsonObject
+    val normalizedState: JsonObject
+}
+
+class MultipleChoiceAnswer: Answer {
+    override val scorableState: JsonObject
+        get() = TODO("Not yet implemented")
+    override val normalizedState: JsonObject
+        get() = TODO("Not yet implemented")
+}
+
+class ExpressionAnswer: Answer {
+    override val scorableState: JsonObject
+        get() = TODO("Not yet implemented")
+    override val normalizedState: JsonObject
+        get() = TODO("Not yet implemented")
+}
