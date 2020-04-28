@@ -4,6 +4,6 @@ val MultipleChoice.options: List<Pair<String, String?>> get() = attrs.content.or
     it to attrs.content.options[it]
 }
 
-val Item.multipleChoice: MultipleChoice? get() = content.content.find {
-    it is MultipleChoice
-}?.let { it as MultipleChoice }
+val Item.answerField: AnswerField? get() = doc.content.find {
+    it is AnswerField
+}?.let { it as AnswerField }

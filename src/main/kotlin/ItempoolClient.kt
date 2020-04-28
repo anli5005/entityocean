@@ -3,7 +3,6 @@ package dev.anli.entityocean
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.coroutines.toDeferred
 import com.beust.klaxon.*
-import java.lang.StringBuilder
 
 class ItempoolClient(val url: String) {
     val client: ApolloClient = ApolloClient.builder()
