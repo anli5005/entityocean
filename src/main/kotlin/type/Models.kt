@@ -13,7 +13,7 @@ open class Content(val type: String)
 
 data class Doc(val content: List<Content>): Content("doc")
 
-data class Paragraph(val content: List<Content>): Content("paragraph")
+data class Paragraph(val content: List<Content> = listOf()): Content("paragraph")
 
 data class Text(val text: String): Content("text")
 

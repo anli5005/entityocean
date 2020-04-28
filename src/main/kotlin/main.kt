@@ -21,16 +21,17 @@ internal fun main() {
         } else {
             val item = challenge.itemRevision
             println("ID: ${item.id}")
+            println("State: ${challenge.state.rawValue}")
 
             val doc = item.doc
             val text = doc.content.flatMap { content ->
                 if (content is Paragraph) content.content.map {
                     when (it) {
                         is Text -> it.text
-                        is Math -> "$${it.attrs.latex}$" ?: "<math>"
+                        is Math -> "$${it.attrs.latex}$"
                         else -> "<${it.type}>"
                     }
-                } else listOf()
+                } ?: listOf() else listOf()
             }.joinToString("")
             println("Text: $text")
 
