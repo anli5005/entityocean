@@ -1,5 +1,6 @@
 package dev.anli.entityocean
 
+import dev.anli.entityocean.type.*
 import kotlinx.coroutines.runBlocking
 import kotlin.system.exitProcess
 

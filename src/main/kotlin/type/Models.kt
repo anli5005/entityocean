@@ -1,7 +1,7 @@
-package dev.anli.entityocean
+package dev.anli.entityocean.type
 
 import com.beust.klaxon.TypeFor
-import dev.anli.entityocean.type.LiveItemState
+import dev.anli.entityocean.util.ContentTypeAdapter
 
 data class Item(
     val id: String,
@@ -25,7 +25,8 @@ interface AnswerField {
     val id: String
 }
 
-data class MultipleChoice(val attrs: Attrs): Content("multiple-choice"), AnswerField {
+data class MultipleChoice(val attrs: Attrs): Content("multiple-choice"),
+    AnswerField {
     data class Attrs(
         val id: String,
         val weight: Double,
@@ -42,7 +43,8 @@ data class MultipleChoice(val attrs: Attrs): Content("multiple-choice"), AnswerF
     override val id get() = attrs.id
 }
 
-data class ExpressionResponse(val attrs: Attrs): Content("expression"), AnswerField {
+data class ExpressionResponse(val attrs: Attrs): Content("expression"),
+    AnswerField {
     data class Attrs(
         val id: String,
         val weight: Double,

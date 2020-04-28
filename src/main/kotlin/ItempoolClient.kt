@@ -3,6 +3,9 @@ package dev.anli.entityocean
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.coroutines.toDeferred
 import com.beust.klaxon.*
+import dev.anli.entityocean.type.Doc
+import dev.anli.entityocean.type.Item
+import dev.anli.entityocean.type.LiveChallenge
 
 class ItempoolClient(val url: String) {
     val client: ApolloClient = ApolloClient.builder()
@@ -19,10 +22,12 @@ class ItempoolClient(val url: String) {
         return data?.let {
             val content = klaxon.parse<Doc>(it.liveChallenge.itemRevision.itemDoc) ?: return null
 
-            LiveChallenge(it.liveChallenge.liveItemState, Item(
-                it.liveChallenge.itemRevision.id,
-                content
-            ))
+            LiveChallenge(
+                it.liveChallenge.liveItemState, Item(
+                    it.liveChallenge.itemRevision.id,
+                    content
+                )
+            )
         }
     }
 }

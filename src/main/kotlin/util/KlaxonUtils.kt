@@ -1,6 +1,7 @@
-package dev.anli.entityocean
+package dev.anli.entityocean.util
 
 import com.beust.klaxon.TypeAdapter
+import dev.anli.entityocean.type.*
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
