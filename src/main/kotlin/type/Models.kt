@@ -82,11 +82,20 @@ interface Answer {
     val normalizedState: JsonObject
 }
 
-class MultipleChoiceAnswer: Answer {
+data class MultipleChoiceAnswer(val optionsChosen: List<String>): Answer {
     override val scorableState: JsonObject
-        get() = TODO("Not yet implemented")
+        get() = JsonObject(mapOf(
+            "response" to mapOf(
+                "optionsChosen" to optionsChosen
+            ),
+            "hintsTaken" to emptyList<Any?>(),
+            "scorableVersion" to "0.1"
+        ))
     override val normalizedState: JsonObject
-        get() = TODO("Not yet implemented")
+        get() = JsonObject(mapOf(
+            "type" to "multiple-choice",
+            "response" to optionsChosen.firstOrNull()
+        ))
 }
 
 class ExpressionAnswer: Answer {

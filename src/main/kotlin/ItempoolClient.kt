@@ -3,9 +3,7 @@ package dev.anli.entityocean
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.coroutines.toDeferred
 import com.beust.klaxon.*
-import dev.anli.entityocean.type.Doc
-import dev.anli.entityocean.type.Item
-import dev.anli.entityocean.type.LiveChallenge
+import dev.anli.entityocean.type.*
 import dev.anli.entityocean.util.ItempoolCookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -14,11 +12,26 @@ import okhttp3.RequestBody
 import okhttp3.internal.EMPTY_REQUEST
 import okhttp3.internal.EMPTY_RESPONSE
 import ru.gildor.coroutines.okhttp.await
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import java.util.*
+import javax.net.ssl.SSLContext
+import javax.net.ssl.X509TrustManager
 
 class ItempoolClient(val host: String, refreshToken: String? = null) {
     var accessToken: String? = null
 
     val jar = ItempoolCookieJar(refreshToken)
+
+    val trustAllCerts = object: X509TrustManager {
+        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+    }
+
+    val context = SSLContext.getInstance("ssl").apply {
+        init(null, arrayOf(trustAllCerts), SecureRandom())
+    }
 
     val http = OkHttpClient.Builder()
         .cookieJar(jar)
@@ -26,6 +39,7 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
             chain.proceed(if (accessToken == null) chain.request() else chain.request().newBuilder()
                 .header("Authorization", "Bearer $accessToken").build())
         }
+        .sslSocketFactory(context.socketFactory, trustAllCerts)
         .build()
 
     val client: ApolloClient = ApolloClient.builder()
@@ -75,6 +89,31 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
         }
         accessToken = res?.run { if (ok) accessToken else null }
         return res
+    }
+
+    suspend fun submitAnswer(itemId: String, answers: Map<String, Answer>): String? {
+        val scorableStates = JsonObject(answers.mapValues { it.value.scorableState })
+        val normalizedAttempt = JsonArray(answers.map { it.value.normalizedState })
+
+        val mutation = AnswerMutation(ItemAttemptInput(
+            id = UUID.randomUUID().toString(),
+            itemRevisionId = itemId,
+            widgetStates = "{}",
+            scorableStates = scorableStates.toJsonString(),
+            complete = true,
+            evaluated = false,
+            normalizedScore = 0.0,
+            normalizedAttempt = normalizedAttempt.toJsonString(),
+            apiVersion = "0.1"
+        ))
+
+        val res = client.mutate(mutation).toDeferred().await()
+        val errors = res.errors
+        if (errors?.isNotEmpty() == true) {
+            throw Exception(errors.first().message)
+        }
+
+        return res.data?.updateItemAttempt?.id
     }
 }
 
