@@ -98,9 +98,18 @@ data class MultipleChoiceAnswer(val optionsChosen: List<String>): Answer {
         ))
 }
 
-class ExpressionAnswer: Answer {
+data class ExpressionAnswer(val latex: String): Answer {
     override val scorableState: JsonObject
-        get() = TODO("Not yet implemented")
+        get() = JsonObject(mapOf(
+            "response" to mapOf(
+                "latex" to latex
+            ),
+            "hintsTaken" to emptyList<Any?>(),
+            "scorableVersion" to "0.1"
+        ))
     override val normalizedState: JsonObject
-        get() = TODO("Not yet implemented")
+        get() = JsonObject(mapOf(
+            "type" to "expression",
+            "response" to latex
+        ))
 }
