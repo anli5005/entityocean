@@ -1,0 +1,9 @@
+query GetAttempts($id: String!) {
+    myItemAttempts(itemRevisionId: $id) {
+        id
+        scorableStates
+        normalizedScore
+        complete
+        evaluated
+    }
+}

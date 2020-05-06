@@ -82,6 +82,10 @@ interface Answer {
     val normalizedState: JsonObject
 }
 
+interface AnswerFactory<TAnswer: Answer> {
+    fun from(scorableState: JsonObject): TAnswer?
+}
+
 data class MultipleChoiceAnswer(val optionsChosen: List<String>): Answer {
     override val scorableState: JsonObject
         get() = JsonObject(mapOf(
@@ -96,6 +100,12 @@ data class MultipleChoiceAnswer(val optionsChosen: List<String>): Answer {
             "type" to "multiple-choice",
             "response" to optionsChosen.firstOrNull()
         ))
+
+    companion object Factory: AnswerFactory<MultipleChoiceAnswer> {
+        @JvmStatic override fun from(scorableState: JsonObject): MultipleChoiceAnswer? {
+            return MultipleChoiceAnswer(scorableState.obj("response")?.array("optionsChosen") ?: return null)
+        }
+    }
 }
 
 data class ExpressionAnswer(val latex: String): Answer {
@@ -112,4 +122,12 @@ data class ExpressionAnswer(val latex: String): Answer {
             "type" to "expression",
             "response" to latex
         ))
+
+    companion object Factory: AnswerFactory<ExpressionAnswer> {
+        @JvmStatic override fun from(scorableState: JsonObject): ExpressionAnswer? {
+            return ExpressionAnswer(scorableState.obj("response")?.string("latex") ?: return null)
+        }
+    }
 }
+
+data class Attempt(val id: String, val answers: Map<String, Answer?>, val normalizedScore: Double, val complete: Boolean, val evaluated: Boolean)

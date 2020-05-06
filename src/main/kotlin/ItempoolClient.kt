@@ -5,6 +5,7 @@ import com.apollographql.apollo.coroutines.toDeferred
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
+import com.beust.klaxon.internal.firstNotNullResult
 import dev.anli.entityocean.type.*
 import dev.anli.entityocean.util.ItempoolCookieJar
 import okhttp3.HttpUrl
@@ -38,6 +39,8 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
         .build()
 
     val klaxon = Klaxon()
+
+    var factories = listOf(MultipleChoiceAnswer.Factory, ExpressionAnswer.Factory)
 
     suspend fun liveChallenge(liveId: String): LiveChallenge? {
         val query = LiveChallengeQuery(liveId)
@@ -74,6 +77,25 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
         }
         accessToken = res?.run { if (ok) accessToken else null }
         return res
+    }
+
+    suspend fun myAttempts(itemId: String): List<Attempt>? {
+        val query = GetAttemptsQuery(itemId)
+        val data = client.query(query).toDeferred().await().data
+
+        return data?.let { d ->
+            d.myItemAttempts.map { myItemAttempt ->
+                val scorableStates: Map<String, JsonObject>? = klaxon.parse(myItemAttempt.scorableStates)
+
+                Attempt(
+                    id = myItemAttempt.id,
+                    answers = scorableStates?.mapValues { entry -> factories.firstNotNullResult { it.from(entry.value) } } ?: emptyMap(),
+                    normalizedScore = myItemAttempt.normalizedScore,
+                    complete = myItemAttempt.complete,
+                    evaluated = myItemAttempt.evaluated
+                )
+            }
+        }
     }
 
     suspend fun submitAnswer(itemId: String, answers: Map<String, Answer>): String? {
