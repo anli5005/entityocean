@@ -2,36 +2,22 @@ package dev.anli.entityocean
 
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.coroutines.toDeferred
-import com.beust.klaxon.*
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Klaxon
 import dev.anli.entityocean.type.*
 import dev.anli.entityocean.util.ItempoolCookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.internal.EMPTY_REQUEST
-import okhttp3.internal.EMPTY_RESPONSE
 import ru.gildor.coroutines.okhttp.await
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
 import java.util.*
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
 
 class ItempoolClient(val host: String, refreshToken: String? = null) {
     var accessToken: String? = null
 
     val jar = ItempoolCookieJar(refreshToken)
-
-    val trustAllCerts = object: X509TrustManager {
-        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-    }
-
-    val context = SSLContext.getInstance("ssl").apply {
-        init(null, arrayOf(trustAllCerts), SecureRandom())
-    }
 
     val http = OkHttpClient.Builder()
         .cookieJar(jar)
@@ -39,7 +25,6 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
             chain.proceed(if (accessToken == null) chain.request() else chain.request().newBuilder()
                 .header("Authorization", "Bearer $accessToken").build())
         }
-        .sslSocketFactory(context.socketFactory, trustAllCerts)
         .build()
 
     val client: ApolloClient = ApolloClient.builder()
