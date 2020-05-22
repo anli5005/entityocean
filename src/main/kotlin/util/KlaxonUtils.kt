@@ -12,6 +12,7 @@ internal class ContentTypeAdapter: TypeAdapter<Content> {
             "paragraph" -> Paragraph::class
             "text" -> Text::class
             "math" -> Math::class
+            "image" -> Image::class
             "multiple-choice" -> MultipleChoice::class
             "expression" -> ExpressionResponse::class
             else -> throw IllegalArgumentException("Unknown type: $type")

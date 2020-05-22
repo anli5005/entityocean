@@ -34,6 +34,7 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
         .serverUrl(HttpUrl.Builder()
             .scheme("https")
             .host(host)
+            .addPathSegment("api")
             .addPathSegment("graphql")
             .build())
         .build()
@@ -70,6 +71,7 @@ class ItempoolClient(val host: String, refreshToken: String? = null) {
         val response = http.newCall(Request.Builder().url(HttpUrl.Builder()
             .scheme("https")
             .host(host)
+            .addPathSegment("api")
             .addPathSegment("refresh_token")
             .build()).method("POST", body).build()).await()
         val res: AccessTokenResponse? = response.body?.let {

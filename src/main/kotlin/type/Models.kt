@@ -23,6 +23,8 @@ data class Math(val attrs: Attrs): Content("math") {
     data class Attrs(val latex: String?)
 }
 
+class Image: Content("image") // TODO
+
 interface AnswerField {
     val id: String
     val answerType: KClass<out Answer>
